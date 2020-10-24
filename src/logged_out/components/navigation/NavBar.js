@@ -57,7 +57,7 @@ function NavBar(props) {
     },
     {
       link: "/blog",
-      name: "Blog",
+      name: "FAQ",
       icon: <BookIcon className="text-white" />
     },
     {

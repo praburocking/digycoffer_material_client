@@ -32,7 +32,7 @@ function Main(props) {
   const selectHome = useCallback(() => {
     smoothScrollTop();
     document.title =
-      "WaVer - Free template for building an SaaS or admin application";
+      "Digy-Coffer, store your data safely and securely";
     setSelectedTab("Home");
   }, [setSelectedTab]);
 

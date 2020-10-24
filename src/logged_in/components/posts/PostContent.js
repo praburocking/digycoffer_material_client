@@ -15,6 +15,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import SelfAligningImage from "../../../shared/components/SelfAligningImage";
 import HighlightedInformation from "../../../shared/components/HighlightedInformation";
 import ConfirmationDialog from "../../../shared/components/ConfirmationDialog";
+import FileCard from './filecard'
 
 const styles = {
   dBlock: { display: "block" },
@@ -34,6 +35,8 @@ function PostContent(props) {
     openAddPostModal,
     classes,
   } = props;
+
+  console.log("posts",posts)
   const [page, setPage] = useState(0);
   const [isDeletePostDialogOpen, setIsDeletePostDialogOpen] = useState(false);
   const [isDeletePostDialogLoading, setIsDeletePostDialogLoading] = useState(
@@ -84,21 +87,8 @@ function PostContent(props) {
             {posts
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((post) => (
-                <Grid item xs={6} sm={4} md={3} key={post.id}>
-                  <SelfAligningImage
-                    src={post.src}
-                    title={post.name}
-                    timeStamp={post.timestamp}
-                    options={[
-                      {
-                        name: "Delete",
-                        onClick: () => {
-                          onDelete(post);
-                        },
-                        icon: <DeleteIcon />,
-                      },
-                    ]}
-                  />
+                <Grid item xs={12} sm={6} md={3} key={post.id}>
+                    <FileCard/>
                 </Grid>
               ))}
           </Grid>
