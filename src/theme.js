@@ -1,4 +1,5 @@
 import { createMuiTheme, responsiveFontSizes } from "@material-ui/core";
+import {purple}  from "@material-ui/core/colors"
 
 // colors
 const primary = "#C9E265";
@@ -28,6 +29,7 @@ const theme = createMuiTheme({
   palette: {
     primary: { main: primary },
     secondary: { main: secondary },
+    neutral:purple,
     common: {
       black,
       darkBlack

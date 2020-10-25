@@ -37,7 +37,7 @@ function AddPost(props) {
       } else if (acceptedFiles.length === 0) {
         pushMessageToSnackbar({
           isErrorMessage: true,
-          text: "The file you wanted to upload isn't an image",
+          text: "File size is more than 5MB",
         });
       } else if (acceptedFiles.length === 1) {
         const file = acceptedFiles[0];
@@ -72,7 +72,7 @@ function AddPost(props) {
     setLoading(true);
     setTimeout(() => {
       pushMessageToSnackbar({
-        text: "Your post has been uploaded",
+        text: "Your File has been uploaded",
       });
       onClose();
     }, 1500);

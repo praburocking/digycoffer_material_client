@@ -7,12 +7,10 @@ import {
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
-  FormControl,
-  Select,
-  OutlinedInput,
-  MenuItem,
+  Switch,
   Box,
   withStyles,
+  TextField,
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import Bordered from "../../../shared/components/Bordered";
@@ -139,7 +137,7 @@ function AddPostOptions(props) {
       );
     }
     return (
-      <Dropzone accept="image/png, image/jpeg" onDrop={onDrop} fullHeight>
+      <Dropzone accept="*/*" onDrop={onDrop} fullHeight>
         <span className={classes.uploadText}>
           Click / Drop file <br /> here
         </span>
@@ -147,46 +145,13 @@ function AddPostOptions(props) {
     );
   }, [onDrop, files, classes, deleteItem]);
 
-  const inputs = useCallback(
-    [
-      {
-        state: option1,
-        label: "Option 1",
-        stateName: "option1",
-      },
-      {
-        state: option2,
-        label: "Option 2",
-        stateName: "option2",
-      },
-      {
-        state: option3,
-        label: "Option 3",
-        stateName: "option3",
-      },
-      {
-        state: option4,
-        label: "Option 4",
-        stateName: "option4",
-      },
-    ],
-    [option1, option2, option3, option4]
-  );
+ 
 
   return (
     <Fragment>
-      {ImageCropper && (
-        <ImageCropperDialog
-          open={cropperFile ? true : false}
-          ImageCropper={ImageCropper}
-          src={cropperFile ? cropperFile.preview : ""}
-          onCrop={onCrop}
-          onClose={onCropperClose}
-          aspectRatio={4 / 3}
-        />
-      )}
+ 
       <Typography paragraph variant="h6">
-        Upload Image
+        Upload File
       </Typography>
       <Box mb={2}>
         {EmojiTextArea && (
@@ -198,14 +163,33 @@ function AddPostOptions(props) {
           />
         )}
       </Box>
-      <Typography paragraph variant="h6">
-        Options
-      </Typography>
+ 
       <List disablePadding>
         <Bordered disableVerticalPadding disableBorderRadius>
+        <ListItem
+              className="listItemLeftPadding"
+              disableGutters
+              divider={true}
+              key={1}
+            >
+              <ListItemText>
+                <Typography variant="body2">Auto Delete</Typography>
+              </ListItemText>
+              
+                <ListItemSecondaryAction>
+                <Switch
+        color="primary"
+        name="checkedB"
+        inputProps={{ 'aria-label': 'primary checkbox' }}
+      />
+                </ListItemSecondaryAction>
+   
+            </ListItem>
+
+
           <ListItem divider disableGutters className="listItemLeftPadding">
             <ListItemText>
-              <Typography variant="body2">Upload at</Typography>
+              <Typography variant="body2">Auto Delete File At</Typography>
             </ListItemText>
             <ListItemSecondaryAction>
               {DateTimePicker && (
@@ -218,41 +202,52 @@ function AddPostOptions(props) {
               )}
             </ListItemSecondaryAction>
           </ListItem>
-          {inputs.map((element, index) => (
+         
             <ListItem
               className="listItemLeftPadding"
               disableGutters
-              divider={index !== inputs.length - 1}
-              key={index}
+              divider={true}
+              key={1}
             >
               <ListItemText>
-                <Typography variant="body2">{element.label}</Typography>
+                <Typography variant="body2">Enter Encrption key for the file</Typography>
               </ListItemText>
-              <FormControl variant="outlined">
+              
                 <ListItemSecondaryAction>
-                  <Select
-                    value={element.state}
-                    onChange={handleChange}
-                    input={
-                      <OutlinedInput
-                        name={element.stateName}
-                        labelWidth={0}
-                        className={classes.numberInput}
-                        classes={{ input: classes.numberInputInput }}
-                      />
-                    }
-                    MenuProps={{ disableScrollLock: true }}
-                  >
-                    {inputOptions.map((innerElement) => (
-                      <MenuItem value={innerElement} key={innerElement}>
-                        {innerElement}
-                      </MenuItem>
-                    ))}
-                  </Select>
+                <TextField
+                      id="standard-password-input"
+          label="Encryption Key"
+          type="password"
+          autoComplete="current-password"
+          variant="outlined"
+          size="small"
+        />
                 </ListItemSecondaryAction>
-              </FormControl>
+   
             </ListItem>
-          ))}
+            <ListItem
+              className="listItemLeftPadding"
+              disableGutters
+           
+              key={2}
+            >
+              <ListItemText>
+                <Typography variant="body2">Enter Re-Encrption key for the file</Typography>
+              </ListItemText>
+              
+                <ListItemSecondaryAction>
+                <TextField
+                      id="standard-password-input"
+          label="Encryption Key"
+          type="password"
+          autoComplete="current-password"
+          variant="outlined"
+          size="small"
+        />
+                </ListItemSecondaryAction>
+   
+            </ListItem>
+       
         </Bordered>
       </List>
     </Fragment>
