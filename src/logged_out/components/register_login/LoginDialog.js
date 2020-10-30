@@ -64,9 +64,15 @@ function LoginDialog(props) {
     }
     else if(props.user.error)
     {
-      setStatus("invalidEmail");
-      setIsLoading(false);
+      console.log("error 1 ==?",props.user.error)
+      if(props.user.error.detail)
+      {
+        console.log("error  ==?",props.user.error.detail)
+        setStatus("error_"+props.user.error.detail);
+      }
+      
     }
+    setIsLoading(false);
     setIsLoading(false);
   },[props.user])
 
@@ -150,6 +156,11 @@ function LoginDialog(props) {
               <HighlightedInformation>
                 We have send instructions on how to reset your password to your
                 email address
+              </HighlightedInformation>
+            ) : ""}
+            {status && status.startsWith("error_") ? (
+              <HighlightedInformation>
+                {status.replace("error_","")}
               </HighlightedInformation>
             ) : ""}
           </Fragment>

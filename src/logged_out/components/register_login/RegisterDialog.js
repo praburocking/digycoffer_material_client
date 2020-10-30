@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, Fragment } from "react";
+import React, { useState, useCallback, useRef, Fragment ,useEffect} from "react";
 import PropTypes from "prop-types";
 import {
   FormHelperText,
@@ -9,12 +9,17 @@ import {
   FormControlLabel,
   withStyles,
 } from "@material-ui/core";
+import {makeStyles}  from "@material-ui/core/styles";
 import FormDialog from "../../../shared/components/FormDialog";
 import HighlightedInformation from "../../../shared/components/HighlightedInformation";
 import ButtonCircularProgress from "../../../shared/components/ButtonCircularProgress";
 import VisibilityPasswordTextField from "../../../shared/components/VisibilityPasswordTextField";
+import {connect} from 'react-redux'
+import {state_to_props,getCookie} from '../../../util/common_utils'
+import {setUserDetailsToStore,emtStores,userFetchType} from '../../../store/action'
+import {withRouter} from 'react-router-dom'
 
-const styles = (theme) => ({
+const useStyles = makeStyles((theme) => ({
   link: {
     transition: theme.transitions.create(["background-color"], {
       duration: theme.transitions.duration.complex,
@@ -29,16 +34,54 @@ const styles = (theme) => ({
       color: theme.palette.primary.dark,
     },
   },
-});
+}));
 
 function RegisterDialog(props) {
-  const { setStatus, theme, onClose, openTermsDialog, status, classes } = props;
+  const { setStatus, theme, onClose, openTermsDialog, status } = props;
   const [isLoading, setIsLoading] = useState(false);
   const [hasTermsOfServiceError, setHasTermsOfServiceError] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const registerTermsCheckbox = useRef();
   const registerPassword = useRef();
+  const registerEmail = useRef();
   const registerPasswordRepeat = useRef();
+  const classes=useStyles();
+
+
+  useEffect(()=>{
+    console.log("props user==>",props.user)
+    if(props.user && props.user.username && props.user.email && getCookie("token"))
+    {
+         
+          setIsLoading(false);
+          props.history.push("/c")
+    }
+    else if(props.user.error)
+    { 
+      if(props.user.error.detail.email){
+        if(props.user.error.detail.email==="This field must be unique."){
+            setStatus("error_Same email exists try loginin with it")
+        }else{
+          setStatus("error_ Email -"+props.user.error.detail.email);
+        }
+       
+      }else if(props.user.error.detail.password){
+          setStatus("error_ Password -"+props.user.error.detail.password);
+      }else  if(props.user.error.detail){
+        setStatus("error_"+props.user.error.detail);
+      }else{
+        setStatus("error_Exception in creating user, kindly retry, if issue persist kindly contact customer care");
+      }
+
+     
+      setIsLoading(false);
+      props.emtStores()
+    }
+    else
+    {
+    setIsLoading(false);
+    }
+  },[props.user])
 
   const register = useCallback(() => {
     if (!registerTermsCheckbox.current.checked) {
@@ -51,11 +94,14 @@ function RegisterDialog(props) {
       setStatus("passwordsDontMatch");
       return;
     }
+   
     setStatus(null);
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
+    const registerJO={username: registerEmail.current.value.split("@")[0],email:registerEmail.current.value,password:registerPassword.current.value};
+    console.log("registerJO ",registerJO);
+    props.setUserDetailsToStore(registerJO,userFetchType.SIGNUP);
+    setIsLoading(false);
+   
   }, [
     setIsLoading,
     setStatus,
@@ -73,6 +119,7 @@ function RegisterDialog(props) {
       headline="Register"
       onFormSubmit={(e) => {
         e.preventDefault();
+        console.log("record submit events",e.target.email);
         register();
       }}
       hideBackdrop
@@ -89,6 +136,8 @@ function RegisterDialog(props) {
             autoFocus
             autoComplete="off"
             type="email"
+            name="email"
+            inputRef={registerEmail}
             onChange={() => {
               if (status === "invalidEmail") {
                 setStatus(null);
@@ -127,6 +176,7 @@ function RegisterDialog(props) {
             FormHelperTextProps={{ error: true }}
             isVisible={isPasswordVisible}
             onVisibilityChange={setIsPasswordVisible}
+            name="password"
           />
           <VisibilityPasswordTextField
             variant="outlined"
@@ -199,23 +249,18 @@ function RegisterDialog(props) {
               error
               style={{
                 display: "block",
-                marginTop: theme.spacing(-1),
+                marginTop: -1,
               }}
             >
               In order to create an account, you have to accept our terms of
               service.
             </FormHelperText>
           )}
-          {status === "accountCreated" ? (
-            <HighlightedInformation>
-              We have created your account. Please click on the link in the
-              email we have sent to you before logging in.
+          {status  &&  status.startsWith("error_") && (
+            <HighlightedInformation >
+              {status.replace("error_","")}
             </HighlightedInformation>
-          ) : (
-            <HighlightedInformation>
-              Registration is disabled until we go live.
-            </HighlightedInformation>
-          )}
+          ) }
         </Fragment>
       }
       actions={
@@ -236,12 +281,11 @@ function RegisterDialog(props) {
 }
 
 RegisterDialog.propTypes = {
-  theme: PropTypes.object.isRequired,
+ 
   onClose: PropTypes.func.isRequired,
   openTermsDialog: PropTypes.func.isRequired,
   status: PropTypes.string,
   setStatus: PropTypes.func.isRequired,
-  classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(RegisterDialog);
+export default connect(state_to_props,{setUserDetailsToStore,emtStores})(RegisterDialog);

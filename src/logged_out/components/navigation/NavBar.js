@@ -71,6 +71,9 @@ function NavBar(props) {
       icon: <LockOpenIcon className="text-white" />
     }
   ];
+  if(props.path==="register"){
+    openRegisterDialog()
+  }
   return (
     <div className={classes.root}>
       <AppBar position="fixed" className={classes.appBar}>

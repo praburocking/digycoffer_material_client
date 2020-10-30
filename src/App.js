@@ -25,14 +25,14 @@ function App(props) {
      props.setUserDetailsToStore(null,userFetchType.ACCOUNTS)
     }
   },[])
-  useEffect(()=>{
-    if(props.user && props.user.error)
-    {
-      //message.error(props.user.error.detail)
-      props.emtStores()
-      deleteAuthorizationCookies()
-    }
-  })
+  // useEffect(()=>{
+  //   if(props.user && props.user.error)
+  //   {
+  //     //message.error(props.user.error.detail)
+  //     props.emtStores()
+  //     deleteAuthorizationCookies()
+  //   }
+  // })
 
   const userExist=()=>
   {
@@ -50,12 +50,10 @@ function App(props) {
         <Pace color={theme.palette.primary.light} />
         <Suspense fallback={<Fragment />}>
           <Switch>
-            <Route path="/c">
-              <LoggedInComponent />
-            </Route>
-            <Route>
-              <LoggedOutComponent />
-            </Route>
+          <Route exact path ="/" render={()=>userExist()?<Redirect to="/home"/>:<LoggedOutComponent/>} ></Route>
+          <Route exact path ="/home" render={()=>userExist()?<LoggedInComponent/>:<Redirect to="/"/>} ></Route>
+          <Route exact path ="/posts" render={()=>userExist()?<LoggedInComponent/>:<Redirect to="/"/>} ></Route>
+          <Route exact path ="/blog" render={()=>userExist()?<Redirect to="/homes"/>:<LoggedOutComponent/>} ></Route>
           </Switch>
         </Suspense>
       </MuiThemeProvider>

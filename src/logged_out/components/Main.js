@@ -98,6 +98,9 @@ function Main(props) {
   }, [setIsCookieRulesDialogOpen]);
 
   useEffect(fetchBlogPosts, []);
+  console.log("props==>",props);
+
+ 
 
   return (
     <div className={classes.wrapper}>
@@ -126,6 +129,7 @@ function Main(props) {
         mobileDrawerOpen={isMobileDrawerOpen}
         handleMobileDrawerOpen={handleMobileDrawerOpen}
         handleMobileDrawerClose={handleMobileDrawerClose}
+        path={props.path}
       />
       <Routing
         blogPosts={blogPosts}
