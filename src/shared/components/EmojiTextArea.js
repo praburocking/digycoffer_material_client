@@ -75,7 +75,8 @@ function EmojiTextarea(props) {
     maxCharacters,
     emojiSet,
     inputClassName,
-    onChange
+    onChange,
+    inputRef
   } = props;
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
@@ -138,6 +139,7 @@ function EmojiTextarea(props) {
             fullWidth
             multiline
             variant="outlined"
+            inputRef={inputRef}
             rows={6}
             onInput={handleTextFieldChange}
             value={value}

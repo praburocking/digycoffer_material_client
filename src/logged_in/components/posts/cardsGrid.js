@@ -1,8 +1,12 @@
-import React from "react";
+import React,{useEffect} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid } from "@material-ui/core";
 import { blue } from "@material-ui/core/colors";
 import SimpleCard from "./filecard";
+import {listFiles} from '../../../store/action'
+import {connect} from 'react-redux'
+
+import {state_to_props} from '../../../util/common_utils'
 //import MenuIcon from "@material-ui/icons/Menu";
 
 const useStyles = makeStyles((theme) => ({
@@ -35,7 +39,13 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Cards = () => {
+const Cards = (props) => {
+
+console.log("props ==>",props);
+  useEffect(()=>
+  {
+     props.listFiles()
+  },[])
   return (
     <Grid
       container
@@ -255,8 +265,19 @@ const Cards = () => {
       >
         <SimpleCard />
       </Grid>
+      <Grid
+        item
+        container
+        md={4}
+        sm={6}
+        xs={12}
+        className={useStyles.cards}
+        justify="center"
+      >
+        <SimpleCard />
+      </Grid>
     </Grid>
   );
 };
 
-export default Cards;
+export default connect(state_to_props,{listFiles})(Cards);

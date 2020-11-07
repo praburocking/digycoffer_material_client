@@ -51,9 +51,10 @@ function App(props) {
         <Suspense fallback={<Fragment />}>
           <Switch>
           <Route exact path ="/" render={()=>userExist()?<Redirect to="/home"/>:<LoggedOutComponent/>} ></Route>
-          <Route exact path ="/home" render={()=>userExist()?<LoggedInComponent/>:<Redirect to="/"/>} ></Route>
+          <Route  path ="/home" render={()=>userExist()?<LoggedInComponent/>:<Redirect to="/"/>} ></Route>
           <Route exact path ="/posts" render={()=>userExist()?<LoggedInComponent/>:<Redirect to="/"/>} ></Route>
-          <Route exact path ="/blog" render={()=>userExist()?<Redirect to="/homes"/>:<LoggedOutComponent/>} ></Route>
+          <Route exact path ="/faq" render={()=>userExist()?<Redirect to="/home"/>:<LoggedOutComponent/>} ></Route>
+          <Route path ="/verify" render={()=>userExist()?<Redirect to="/home"/>:<LoggedOutComponent/>} ></Route>
           </Switch>
         </Suspense>
       </MuiThemeProvider>

@@ -2,6 +2,7 @@ import React, { Fragment, useRef, useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import classNames from "classnames";
+import {connect} from 'react-redux'
 import {
   AppBar,
   Toolbar,
@@ -30,6 +31,10 @@ import MessagePopperButton from "./MessagePopperButton";
 import SideDrawer from "./SideDrawer";
 import Balance from "./Balance";
 import NavigationDrawer from "../../../shared/components/NavigationDrawer";
+import {signout} from '../../../services/connectToServer'
+import {deleteAuthorizationCookies} from '../../../util/common_utils'
+
+import {emtStores} from '../../../store/action'
 
 const styles = (theme) => ({
   appBar: {
@@ -126,6 +131,8 @@ const styles = (theme) => ({
   },
 });
 
+
+
 function NavBar(props) {
   const { selectedTab, messages, classes, width, openAddBalanceDialog } = props;
   // Will be use to make website more accessible by screen readers
@@ -148,6 +155,21 @@ function NavBar(props) {
   const closeDrawer = useCallback(() => {
     setIsSideDrawerOpen(false);
   }, [setIsSideDrawerOpen]);
+
+
+  const logOut=async()=>{
+    const signOutRes=await signout();
+    if([200,204].includes(signOutRes.status))
+    {
+     props.emtStores()
+     deleteAuthorizationCookies();
+    
+    }
+    else
+    {
+        const exception=true;
+    }
+  }
 
   const menuItems = [
     {
@@ -203,6 +225,7 @@ function NavBar(props) {
     {
       link: "/",
       name: "Logout",
+      onClick:logOut,
       icon: {
         desktop: (
           <PowerSettingsNewIcon className="text-white" fontSize="small" />
@@ -362,4 +385,4 @@ NavBar.propTypes = {
   openAddBalanceDialog: PropTypes.func.isRequired,
 };
 
-export default withWidth()(withStyles(styles, { withTheme: true })(NavBar));
+export default withWidth()(withStyles(styles, { withTheme: true })(connect(null,{emtStores})(NavBar)));

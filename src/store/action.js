@@ -29,7 +29,7 @@ export const listFiles=()=>
         {
         let files=filesResp.data;
         //files.results.map(file=>{file.key=file.id})
-        dispatch ({type:ACTIONS.FILES_INIT,data:filesResp.data.results})}
+        dispatch ({type:ACTIONS.FILES_INIT,data:filesResp.data})}
 }
 }
 

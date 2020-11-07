@@ -8,6 +8,10 @@ import ConsecutiveSnackbarMessages from "../../shared/components/ConsecutiveSnac
 import smoothScrollTop from "../../shared/functions/smoothScrollTop";
 import persons from "../dummy_data/persons";
 import LazyLoadAddBalanceDialog from "./subscription/LazyLoadAddBalanceDialog";
+import {listFiles} from '../../store/action'
+import {connect} from 'react-redux'
+
+import {state_to_props} from '../../util/common_utils'
 
 const styles = (theme) => ({
   main: {
@@ -36,7 +40,7 @@ function Main(props) {
   const [hasFetchedCardChart, setHasFetchedCardChart] = useState(false);
   const [EmojiTextArea, setEmojiTextArea] = useState(null);
   const [hasFetchedEmojiTextArea, setHasFetchedEmojiTextArea] = useState(false);
-  const [ImageCropper, setImageCropper] = useState(null);
+
   const [hasFetchedImageCropper, setHasFetchedImageCropper] = useState(false);
   const [Dropzone, setDropzone] = useState(null);
   const [hasFetchedDropzone, setHasFetchedDropzone] = useState(false);
@@ -191,28 +195,7 @@ function Main(props) {
     setMessages(messages);
   }, [setMessages]);
 
-  const fetchRandomPosts = useCallback(() => {
-    shuffle(persons);
-    const posts = [];
-    const iterations = persons.length;
-    const oneDaySeconds = 60 * 60 * 24;
-    let curUnix = Math.round(
-      new Date().getTime() / 1000 - iterations * oneDaySeconds
-    );
-    for (let i = 0; i < iterations; i += 1) {
-      const person = persons[i];
-      const post = {
-        id: i,
-        src: person.src,
-        timestamp: curUnix,
-        name: person.name,
-      };
-      curUnix += oneDaySeconds;
-      posts.push(post);
-    }
-    posts.reverse();
-    setPosts(posts);
-  }, [setPosts]);
+
 
   const toggleAccountActivation = useCallback(() => {
     if (pushMessageToSnackbar) {
@@ -256,12 +239,7 @@ function Main(props) {
         setEmojiTextArea(Component.default);
       });
     }
-    if (!hasFetchedImageCropper) {
-      setHasFetchedImageCropper(true);
-      import("../../shared/components/ImageCropper").then((Component) => {
-        setImageCropper(Component.default);
-      });
-    }
+
     if (!hasFetchedDropzone) {
       setHasFetchedDropzone(true);
       import("../../shared/components/Dropzone").then((Component) => {
@@ -277,7 +255,7 @@ function Main(props) {
   }, [
     setSelectedTab,
     setEmojiTextArea,
-    setImageCropper,
+
     setDropzone,
     setDateTimePicker,
     hasFetchedEmojiTextArea,
@@ -304,17 +282,9 @@ function Main(props) {
   );
 
   useEffect(() => {
-    fetchRandomTargets();
-    fetchRandomStatistics();
     fetchRandomTransactions();
-    fetchRandomMessages();
-    fetchRandomPosts();
   }, [
-    fetchRandomTargets,
-    fetchRandomStatistics,
     fetchRandomTransactions,
-    fetchRandomMessages,
-    fetchRandomPosts,
   ]);
 
   return (
@@ -335,7 +305,6 @@ function Main(props) {
       <main className={classNames(classes.main)}>
         <Routing
           isAccountActivated={isAccountActivated}
-          ImageCropper={ImageCropper}
           EmojiTextArea={EmojiTextArea}
           CardChart={CardChart}
           Dropzone={Dropzone}
@@ -344,14 +313,14 @@ function Main(props) {
           pushMessageToSnackbar={pushMessageToSnackbar}
           transactions={transactions}
           statistics={statistics}
-          posts={posts}
+  
           targets={targets}
           selectDashboard={selectDashboard}
           selectPosts={selectPosts}
           selectSubscription={selectSubscription}
           openAddBalanceDialog={openAddBalanceDialog}
           setTargets={setTargets}
-          setPosts={setPosts}
+     
         />
       </main>
     </Fragment>

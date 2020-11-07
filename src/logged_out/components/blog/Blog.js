@@ -3,9 +3,9 @@ import PropTypes from "prop-types";
 import classNames from "classnames";
 import { Grid, Box, isWidthUp, withWidth } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import BlogCard from "./BlogCard";
+
 import Faq from '../faq';
-import { maxWidth } from "@material-ui/system";
+
 const useStyles = makeStyles((theme) => ({
   blogContentWrapper: {
     marginLeft: theme.spacing(1),
@@ -31,7 +31,6 @@ const useStyles = makeStyles((theme) => ({
 
 
 function Blog(props) {
-  const {  width, blogPosts, selectBlog } = props;
   const classes=useStyles();
 
   return (

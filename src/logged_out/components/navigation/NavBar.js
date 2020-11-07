@@ -56,7 +56,7 @@ function NavBar(props) {
       icon: <HomeIcon className="text-white" />
     },
     {
-      link: "/blog",
+      link: "/faq",
       name: "FAQ",
       icon: <BookIcon className="text-white" />
     },
@@ -73,6 +73,9 @@ function NavBar(props) {
   ];
   if(props.path==="register"){
     openRegisterDialog()
+  }
+  if(props.path==="login"){
+    
   }
   return (
     <div className={classes.root}>

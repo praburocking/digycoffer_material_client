@@ -1,9 +1,10 @@
-import React, { Fragment, useState, useCallback } from "react";
+import React, { Fragment, useState, useCallback,useRef } from "react";
 import PropTypes from "prop-types";
 import { Button, Box } from "@material-ui/core";
 import ActionPaper from "../../../shared/components/ActionPaper";
 import ButtonCircularProgress from "../../../shared/components/ButtonCircularProgress";
 import AddPostOptions from "./AddPostOptions";
+import {uploadfile} from '../../../services/connectToServer'
 
 function AddPost(props) {
   const {
@@ -16,20 +17,20 @@ function AddPost(props) {
   } = props;
 
   const [files, setFiles] = useState([]);
+
   const [uploadAt, setUploadAt] = useState(new Date());
   const [loading, setLoading] = useState(false);
-  const [cropperFile, setCropperFile] = useState(null);
+  
+  const encrpytKey=useRef(null)
+  const desc=useRef(null)
+ const reEncrpytKey=useRef(null)
 
-  const acceptDrop = useCallback(
-    (file) => {
-      setFiles([file]);
-    },
-    [setFiles]
-  );
+
 
   const onDrop = useCallback(
-    (acceptedFiles, rejectedFiles) => {
-      if (acceptedFiles.length + rejectedFiles.length > 1) {
+    (acceptedFiles) => {
+      console.log("fielss==>",acceptedFiles);
+      if (acceptedFiles.length  > 1) {
         pushMessageToSnackbar({
           isErrorMessage: true,
           text: "You cannot upload more than one file at once",
@@ -40,43 +41,53 @@ function AddPost(props) {
           text: "File size is more than 5MB",
         });
       } else if (acceptedFiles.length === 1) {
-        const file = acceptedFiles[0];
-        file.preview = URL.createObjectURL(file);
-        file.key = new Date().getTime();
-        setCropperFile(file);
+        const curfile = acceptedFiles[0];
+        curfile.preview = URL.createObjectURL(curfile);
+        curfile.key = new Date().getTime();
+        setFiles([curfile]);
       }
     },
-    [pushMessageToSnackbar, setCropperFile]
+    [pushMessageToSnackbar,setFiles]
   );
 
-  const onCropperClose = useCallback(() => {
-    setCropperFile(null);
-  }, [setCropperFile]);
 
   const deleteItem = useCallback(() => {
-    setCropperFile(null);
+
     setFiles([]);
-  }, [setCropperFile, setFiles]);
+  }, [setFiles]);
 
-  const onCrop = useCallback(
-    (dataUrl) => {
-      const file = { ...cropperFile };
-      file.preview = dataUrl;
-      acceptDrop(file);
-      setCropperFile(null);
-    },
-    [acceptDrop, cropperFile, setCropperFile]
-  );
-
-  const handleUpload = useCallback(() => {
+  const handleUpload = useCallback( async() => {
     setLoading(true);
-    setTimeout(() => {
+    const data = new FormData() 
+
+    console.log("priivatekey be3fore upload==>",encrpytKey.current.value)
+    console.log("desc be3fore upload==>",desc.current.value)
+    if(!encrpytKey.current.value ||encrpytKey.current.value===""){
+      pushMessageToSnackbar({
+        text: "invalid encryption key",
+      });
+      setLoading(false);
+    }else if(encrpytKey.current.value===reEncrpytKey.current.value)
+    {
+    data.append('file', files[0]);
+    data.append('private_key',encrpytKey.current.value);
+    data.append('description',desc.current.value);
+    const resp= await uploadfile(data);
+    console.log("resp ==>",resp)
+    setFiles([]);
       pushMessageToSnackbar({
         text: "Your File has been uploaded",
       });
       onClose();
-    }, 1500);
-  }, [setLoading, onClose, pushMessageToSnackbar]);
+    }
+    else {
+      pushMessageToSnackbar({
+        text: "encryption key mismatch",
+      });
+      setLoading(false);
+    }
+   
+  }, [setLoading, onClose, pushMessageToSnackbar,setFiles,files]);
 
   return (
     <Fragment>
@@ -93,10 +104,11 @@ function AddPost(props) {
             DateTimePicker={DateTimePicker}
             uploadAt={uploadAt}
             onChangeUploadAt={setUploadAt}
-            onCrop={onCrop}
+            encrpytKey={encrpytKey}
+            desc={desc}
+            reEncrpytKey={reEncrpytKey}
+
             ImageCropper={ImageCropper}
-            cropperFile={cropperFile}
-            onCropperClose={onCropperClose}
           />
         }
         actions={
@@ -110,7 +122,7 @@ function AddPost(props) {
               onClick={handleUpload}
               variant="contained"
               color="secondary"
-              disabled={files.length === 0 || loading}
+              disabled={files.length===0 || loading}
             >
               Upload {loading && <ButtonCircularProgress />}
             </Button>

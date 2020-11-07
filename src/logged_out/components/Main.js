@@ -26,6 +26,7 @@ function Main(props) {
   const [selectedTab, setSelectedTab] = useState(null);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [blogPosts, setBlogPosts] = useState([]);
+  const [verificationPage, setVerificiationPage] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(null);
   const [isCookieRulesDialogOpen, setIsCookieRulesDialogOpen] = useState(false);
 
@@ -38,9 +39,16 @@ function Main(props) {
 
   const selectBlog = useCallback(() => {
     smoothScrollTop();
-    document.title = "WaVer - Blog";
-    setSelectedTab("Blog");
+    document.title = "FAQ";
+    setSelectedTab("FAQ");
   }, [setSelectedTab]);
+
+
+  const selectVerification = useCallback(() => {
+    smoothScrollTop();
+    document.title = "Verification";
+    setSelectedTab("Verification");
+  }, [setVerificiationPage]);
 
   const openLoginDialog = useCallback(() => {
     setDialogOpen("login");
@@ -133,9 +141,10 @@ function Main(props) {
       />
       <Routing
         blogPosts={blogPosts}
+        selectVerification={selectVerification}
         selectHome={selectHome}
         selectBlog={selectBlog}
-        openRegisterDialog={openRegisterDialog}
+        openRegisterDialog={openRegisterDialog}s
       />
       <Footer />
     </div>

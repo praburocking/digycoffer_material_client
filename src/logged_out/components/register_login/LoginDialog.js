@@ -158,11 +158,11 @@ function LoginDialog(props) {
                 email address
               </HighlightedInformation>
             ) : ""}
-            {status && status.startsWith("error_") ? (
+            {status && status.startsWith("error_") && (
               <HighlightedInformation>
                 {status.replace("error_","")}
               </HighlightedInformation>
-            ) : ""}
+            ) }
           </Fragment>
         }
         actions={

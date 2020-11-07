@@ -13,10 +13,14 @@ import EditIcon from "@material-ui/icons/Edit";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import HistoryIcon from "@material-ui/icons/History";
 import Tooltip from "@material-ui/core/Tooltip";
+import PropsRoute from "../../../shared/components/PropsRoute";
+import { minHeight } from "@material-ui/system";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    minWidth: 270
+    minWidth: 270,
+    minHeight:250,
+    backgroundColor:"#ff914d38"
 
   },
   bullet: {
@@ -39,14 +43,14 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function FileCard() {
+export default function FileCard(props) {
   const classes = useStyles();
 
   return (
     <Card className={classes.root}>
-      <CardContent>
+      <CardContent style={{minHeight:200}}>
         <Typography variant="h5" component="h2">
-          rocking.csv
+         {props.file.name}
         </Typography>
         <Grid container justify="space-between" color="textSecondary">
           <Typography className={classes.pos}>Total download : 30</Typography>
@@ -54,11 +58,19 @@ export default function FileCard() {
             failed :10
           </Typography>
         </Grid>
+        <Grid container justify="space-between" color="textSecondary">
         <Typography variant="body2" component="p">
-          Description is wriitten here
+          Description:
         </Typography>
+          <Typography className={classes.pos}>Size :{props.file.size}</Typography>
+        </Grid>
+        <Grid container justify="space-between" style={{backgroundColor:"#ff914d38",minHeight:110}}  >
+        <Typography variant="body2" component="p" >
+        {props.file.description}
+        </Typography>
+        </Grid>
       </CardContent>
-      <CardActions>
+      <CardActions >
         <Grid
           container
           item
@@ -88,8 +100,8 @@ export default function FileCard() {
                 </Button>
               </Tooltip>
               <Tooltip title="Delete">
-                <Button aria-label="delete" color="secondary" fullWidth>
-                  <DeleteRoundedIcon style={{ color: "red" }} />
+                <Button aria-label="delete" color="secondary" fullWidth onClick={props.setIsDeletePostDialogOpen}>
+                  <DeleteRoundedIcon style={{ color: "red" }}  />
                 </Button>
               </Tooltip>
             </ButtonGroup>

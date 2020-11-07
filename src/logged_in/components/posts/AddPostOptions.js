@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useCallback } from "react";
 import PropTypes from "prop-types";
+import {useDropzone} from 'react-dropzone'
 import {
   Typography,
   IconButton,
@@ -14,7 +15,6 @@ import {
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import Bordered from "../../../shared/components/Bordered";
-import ImageCropperDialog from "../../../shared/components/ImageCropperDialog";
 
 const styles = (theme) => ({
   floatButtonWrapper: {
@@ -82,52 +82,20 @@ function AddPostOptions(props) {
     deleteItem,
     onDrop,
     EmojiTextArea,
-    ImageCropper,
+    encrpytKey,
     DateTimePicker,
-    cropperFile,
-    onCrop,
-    onCropperClose,
+    reEncrpytKey,
+    desc,
+
     uploadAt,
     onChangeUploadAt,
   } = props;
-  const [option1, setOption1] = useState("None");
-  const [option2, setOption2] = useState("None");
-  const [option3, setOption3] = useState("None");
-  const [option4, setOption4] = useState("None");
-
-  const handleChange = useCallback(
-    (event) => {
-      const { name, value } = event.target;
-      switch (name) {
-        case "option1":
-          setOption1(value);
-          break;
-        case "option2":
-          setOption2(value);
-          break;
-        case "option3":
-          setOption3(value);
-          break;
-        case "option4":
-          setOption4(value);
-          break;
-        default:
-          throw new Error("No branch selected in switch-statement.");
-      }
-    },
-    [setOption1, setOption2, setOption3, setOption4]
-  );
 
   const printFile = useCallback(() => {
     if (files[0]) {
       return (
         <div className={classes.imgWrapper}>
-          <img
-            alt="uploaded item"
-            src={files[0].preview}
-            className={classes.img}
-            style={{ height: 148 }}
-          />
+        <div  className={classes.img}  style={{ height: 148 }}>{files[0].name}</div> 
           <div className={classes.floatButtonWrapper}>
             <IconButton onClick={deleteItem}>
               <CloseIcon />
@@ -160,6 +128,9 @@ function AddPostOptions(props) {
             maxCharacters={2200}
             rightContent={printFile()}
             emojiSet="google"
+            placeholder="Description"
+            inputRef={desc}
+
           />
         )}
       </Box>
@@ -207,9 +178,9 @@ function AddPostOptions(props) {
               className="listItemLeftPadding"
               disableGutters
               divider={true}
-              key={1}
+              key={2}
             >
-              <ListItemText>
+              <ListItemText >
                 <Typography variant="body2">Enter Encrption key for the file</Typography>
               </ListItemText>
               
@@ -221,6 +192,7 @@ function AddPostOptions(props) {
           autoComplete="current-password"
           variant="outlined"
           size="small"
+          inputRef={encrpytKey}
         />
                 </ListItemSecondaryAction>
    
@@ -229,10 +201,10 @@ function AddPostOptions(props) {
               className="listItemLeftPadding"
               disableGutters
            
-              key={2}
+              key={3}
             >
               <ListItemText>
-                <Typography variant="body2">Enter Re-Encrption key for the file</Typography>
+                <Typography variant="body2">Re-Enter Encrption key for the file</Typography>
               </ListItemText>
               
                 <ListItemSecondaryAction>
@@ -243,6 +215,8 @@ function AddPostOptions(props) {
           autoComplete="current-password"
           variant="outlined"
           size="small"
+          inputRef={reEncrpytKey}
+         
         />
                 </ListItemSecondaryAction>
    
@@ -259,11 +233,8 @@ AddPostOptions.propTypes = {
   DateTimePicker: PropTypes.elementType,
   EmojiTextArea: PropTypes.elementType,
   Dropzone: PropTypes.elementType,
-  ImageCropper: PropTypes.elementType,
   classes: PropTypes.object,
   cropperFile: PropTypes.object,
-  onCrop: PropTypes.func,
-  onCropperClose: PropTypes.func,
   files: PropTypes.arrayOf(PropTypes.object).isRequired,
   deleteItem: PropTypes.func,
   onDrop: PropTypes.func,

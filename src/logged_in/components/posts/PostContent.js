@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback,useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   Grid,
@@ -11,11 +11,13 @@ import {
   Box,
   withStyles,
 } from "@material-ui/core";
-import DeleteIcon from "@material-ui/icons/Delete";
-import SelfAligningImage from "../../../shared/components/SelfAligningImage";
+
 import HighlightedInformation from "../../../shared/components/HighlightedInformation";
 import ConfirmationDialog from "../../../shared/components/ConfirmationDialog";
+import {state_to_props} from '../../../util/common_utils'
 import FileCard from './filecard'
+import {listFiles} from '../../../store/action'
+import {connect} from 'react-redux'
 
 const styles = {
   dBlock: { display: "block" },
@@ -25,18 +27,16 @@ const styles = {
   },
 };
 
-const rowsPerPage = 25;
+const rowsPerPage = 10;
 
 function PostContent(props) {
   const {
     pushMessageToSnackbar,
-    setPosts,
-    posts,
     openAddPostModal,
     classes,
   } = props;
 
-  console.log("posts",posts)
+
   const [page, setPage] = useState(0);
   const [isDeletePostDialogOpen, setIsDeletePostDialogOpen] = useState(false);
   const [isDeletePostDialogLoading, setIsDeletePostDialogLoading] = useState(
@@ -48,25 +48,10 @@ function PostContent(props) {
     setIsDeletePostDialogLoading(false);
   }, [setIsDeletePostDialogOpen, setIsDeletePostDialogLoading]);
 
-  const deletePost = useCallback(() => {
-    setIsDeletePostDialogLoading(true);
-    setTimeout(() => {
-      const _posts = [...posts];
-      const index = _posts.find((element) => element.id === deletePost.id);
-      _posts.splice(index, 1);
-      setPosts(_posts);
-      pushMessageToSnackbar({
-        text: "Your post has been deleted",
-      });
-      closeDeletePostDialog();
-    }, 1500);
-  }, [
-    posts,
-    setPosts,
-    setIsDeletePostDialogLoading,
-    pushMessageToSnackbar,
-    closeDeletePostDialog,
-  ]);
+  useEffect(()=>
+  {
+     props.listFiles()
+  },[])
 
   const onDelete = useCallback(() => {
     setIsDeletePostDialogOpen(true);
@@ -80,15 +65,15 @@ function PostContent(props) {
   );
 
   const printImageGrid = useCallback(() => {
-    if (posts.length > 0) {
+    if ( props.files.length > 0) {
       return (
         <Box p={1}>
           <Grid container spacing={1}>
-            {posts
+            { props.files
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((post) => (
-                <Grid item xs={12} sm={6} md={3} key={post.id}>
-                    <FileCard/>
+              .map((file) => (
+                <Grid item xs={12} sm={6} md={3} key={file.id}>
+                    <FileCard file={file} setIsDeletePostDialogOpen={setIsDeletePostDialogOpen}/>
                 </Grid>
               ))}
           </Grid>
@@ -102,7 +87,7 @@ function PostContent(props) {
         </HighlightedInformation>
       </Box>
     );
-  }, [posts, onDelete, page]);
+  }, [ props.files, onDelete, page]);
 
   return (
     <Paper>
@@ -121,7 +106,8 @@ function PostContent(props) {
       {printImageGrid()}
       <TablePagination
         component="div"
-        count={posts.length}
+        rowsPerPageOptions={[5, 10, 25]}
+        count={ props.files_count}
         rowsPerPage={rowsPerPage}
         page={page}
         backIconButtonProps={{
@@ -134,8 +120,8 @@ function PostContent(props) {
         classes={{
           select: classes.dNone,
           selectIcon: classes.dNone,
-          actions: posts.length > 0 ? classes.dBlock : classes.dNone,
-          caption: posts.length > 0 ? classes.dBlock : classes.dNone,
+          actions:  props.files.length > 0 ? classes.dBlock : classes.dNone,
+          caption:  props.files.length > 0 ? classes.dBlock : classes.dNone,
         }}
         labelRowsPerPage=""
       />
@@ -145,7 +131,6 @@ function PostContent(props) {
         content="Do you really want to delete the post?"
         onClose={closeDeletePostDialog}
         loading={isDeletePostDialogLoading}
-        onConfirm={deletePost}
       />
     </Paper>
   );
@@ -159,4 +144,4 @@ PostContent.propTypes = {
   pushMessageToSnackbar: PropTypes.func,
 };
 
-export default withStyles(styles)(PostContent);
+export default withStyles(styles)(connect(state_to_props,{listFiles})(PostContent));

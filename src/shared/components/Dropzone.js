@@ -17,13 +17,11 @@ const styles = {
   }
 };
 
-function getColor(isDragAccept, isDragReject, theme) {
+function getColor(isDragAccept, theme) {
   if (isDragAccept) {
     return theme.palette.success.main;
   }
-  if (isDragReject) {
-    return theme.palette.error.dark;
-  }
+
   return theme.palette.common.black;
 }
 
@@ -32,12 +30,8 @@ function Dropzone(props) {
   const {
     getRootProps,
     getInputProps,
-    isDragAccept,
-    isDragReject
-  } = useDropzone({
-    accept: accept,
-    onDrop: onDrop
-  });
+    isDragActive,
+  } = useDropzone({onDrop});
   return (
     <Box {...getRootProps()} height="100%">
       <input {...getInputProps()} />
@@ -48,7 +42,7 @@ function Dropzone(props) {
           classes.button
         )}
         variant="outlined"
-        color={getColor(isDragAccept, isDragReject, theme)}
+        color={getColor(isDragActive,  theme)}
         style={style}
       >
         {children}
