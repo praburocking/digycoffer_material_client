@@ -1,0 +1,120 @@
+import React, { useEffect,useState } from "react";
+import PropTypes from "prop-types";
+import classNames from "classnames";
+import { Grid, Box, isWidthUp, withWidth, Button ,Container,Typography} from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+// import {UserVerification} from './userVerification';
+
+import {verifyUser} from '../../../services/connectToServer'
+import constants from '../../../util/constants'
+  
+const useStyles = makeStyles((theme) => ({
+  blogContentWrapper: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    [theme.breakpoints.up("sm")]: {
+      marginLeft: theme.spacing(4),
+      marginRight: theme.spacing(4),
+    },
+    maxWidth: 1280,
+    width: "100%",
+  },
+  faqWrapper:{
+    maxWidth:1000
+  },
+  wrapper: {
+    minHeight: "40vh",
+    backgroundColor:"#c9e265ad"
+  },
+  noDecoration: {
+    textDecoration: "none !important",
+  },
+ container: {
+    marginTop:"15vh",
+    padding:20
+  },
+}));
+
+
+
+function Verification(props) {
+  const classes=useStyles();
+console.log("verification props ==>",props);
+const [isVerified,setVerified]=useState(true);
+const [status,setStatus]=useState("Verifying User...");
+
+
+const verifyuser=async(data)=>
+{   
+    console.log("data==> ",data);
+    if(props.token && props.type)
+    {   let token=props.token;
+        let type=props.type;
+        console.log("token ==> ",token);
+       const verifyUserResp=await verifyUser(token,type,data);
+       if(!constants.errorResponse.includes (verifyUserResp.status))
+       {
+        
+        setVerified(true);
+        props.history.push('/');
+       
+       }
+       else
+       {   console.log("eriyuser ",verifyUserResp.data)
+           if(verifyUserResp.data.message)
+           {
+            setStatus(verifyUserResp.data.message)
+           }
+           else
+           {
+               setStatus("Exception while verifying user")
+           }
+           
+       }
+    }
+    else
+    {
+        
+        props.history.push('/')
+    }
+}
+
+
+
+  return (
+    <Container maxWidth="sm" className={classes.container}>
+    <Grid
+  container
+  direction="column"
+  justify="center"
+  alignItems="center"
+>
+    <Grid item
+    container
+  direction="row"
+  justify="center"
+  alignItems="center"
+      className={classNames(classes.wrapper, "lg-p-top")}
+      
+    >
+    <Typography variant="h1" component="h2">
+ Verification
+</Typography>
+    <Typography variant="h5" component="h5">
+ Kindly click on the button to verify the email address.
+</Typography>
+     <Button variant="contained" color="primary" size="large" >
+        Verify User
+</Button>
+    </Grid>
+    </Grid>
+    </Container>
+  );
+}
+
+Verification.propTypes = {
+  width: PropTypes.string.isRequired,
+  blogPosts: PropTypes.arrayOf(PropTypes.object),
+};
+
+export default withWidth()(Verification);

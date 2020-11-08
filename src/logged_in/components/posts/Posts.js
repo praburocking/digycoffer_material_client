@@ -11,8 +11,7 @@ function Posts(props) {
     Dropzone,
     DateTimePicker,
     pushMessageToSnackbar,
-    posts,
-    setPosts,
+ 
   } = props;
   const [isAddPostPaperOpen, setIsAddPostPaperOpen] = useState(false);
 
@@ -40,8 +39,6 @@ function Posts(props) {
   }
   return <PostContent
     openAddPostModal={openAddPostModal}
-    posts={posts}
-    setPosts={setPosts}
     pushMessageToSnackbar={pushMessageToSnackbar}
   />
 }

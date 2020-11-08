@@ -12,6 +12,7 @@ import {
   Box,
   withStyles,
   TextField,
+  Grid,
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import Bordered from "../../../shared/components/Bordered";
@@ -95,7 +96,11 @@ function AddPostOptions(props) {
     if (files[0]) {
       return (
         <div className={classes.imgWrapper}>
-        <div  className={classes.img}  style={{ height: 148 }}>{files[0].name}</div> 
+        <Grid  className={classes.img}  style={{ height: 148,backgroundColor:"#ff914d38"}} container direction="row" justify="center" alignItems="center">
+          <Typography>
+          {files[0].name}
+          </Typography>
+          </Grid> 
           <div className={classes.floatButtonWrapper}>
             <IconButton onClick={deleteItem}>
               <CloseIcon />

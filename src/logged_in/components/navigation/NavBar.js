@@ -173,7 +173,7 @@ function NavBar(props) {
 
   const menuItems = [
     {
-      link: "/c/dashboard",
+      link: "/home/dashboard",
       name: "Dashboard",
       onClick: closeMobileDrawer,
       icon: {
@@ -205,7 +205,7 @@ function NavBar(props) {
       },
     },
     {
-      link: "/c/subscription",
+      link: "/home/subscription",
       name: "Subscription",
       onClick: closeMobileDrawer,
       icon: {
