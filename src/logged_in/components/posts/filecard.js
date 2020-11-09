@@ -56,6 +56,7 @@ export default function FileCard(props) {
   const classes = useStyles();
   // const [openDownloadHist, setOpenDownloadHist] = useState(false);
   const [openDownload, setOpenDownload] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
   const descriptionElementRef = useRef(null);
   const encryptKeyRef=useRef(null);
   const [downloadHistory,setDownloadHistory]=useState(null);
@@ -107,6 +108,27 @@ export default function FileCard(props) {
       console.log(response);
     }
 
+
+    const handeDelete=async()=>
+    {
+        let deleteResp=await deleteFile(props.file.id)
+        if([200,201,204].includes( deleteResp.status) )
+          {
+            props.deleteFromStore(props.file.id)
+          }
+        else
+          {
+            if(deleteResp.data && deleteResp.data.message)
+              {
+                props.pushMessageToSnackbar({text:deleteResp.data.message})
+              }
+            else
+              {
+                props.pushMessageToSnackbar({text:"Exception while deleting the file, Please try again later"})
+              }
+            }
+          setOpenDelete(false)
+      }
 
   return (
    <div>
@@ -163,7 +185,7 @@ export default function FileCard(props) {
                 </Button>
               </Tooltip>
               <Tooltip title="Delete">
-                <Button aria-label="delete" color="secondary" fullWidth onClick={props.setIsDeletePostDialogOpen}>
+                <Button aria-label="delete" color="secondary" fullWidth onClick={()=>setOpenDelete(true)}>
                   <DeleteRoundedIcon style={{ color: "red" }}  />
                 </Button>
               </Tooltip>
@@ -229,6 +251,30 @@ export default function FileCard(props) {
           </Button>
         </DialogActions>
       </Dialog>
+      <Dialog
+        open={openDelete}
+        onClose={()=>setOpenDelete(false)}
+        scroll={'paper'}
+        aria-labelledby="scroll-dialog-title"
+        aria-describedby="scroll-dialog-description"
+      >
+        <DialogTitle   id="scroll-dialog-title"> Delete -  {props.file.name}</DialogTitle>
+        <DialogContent>
+          <DialogContentText
+            id="scroll-dialog-description"
+            ref={descriptionElementRef}
+            tabIndex={-1}
+          >
+          This operation is irreversible. Are you sure want to delete this file ?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions   >
+          <Button onClick={handeDelete} color="secondary" variant="contained">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
     </div>
   );
 }
