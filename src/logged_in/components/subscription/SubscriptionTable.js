@@ -1,23 +1,38 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState,useRef } from "react";
 import PropTypes from "prop-types";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TablePagination,
-  TableRow,
-  withStyles
+  TextField,Grid,Dialog,DialogTitle,DialogContentText,DialogContent,DialogActions,Button
 } from "@material-ui/core";
-import EnhancedTableHead from "../../../shared/components/EnhancedTableHead";
-import ColorfulChip from "../../../shared/components/ColorfulChip";
-import unixToDateString from "../../../shared/functions/unixToDateString";
-import HighlightedInformation from "../../../shared/components/HighlightedInformation";
-import currencyPrettyPrint from "../../../shared/functions/currencyPrettyPrint";
 
-const styles = theme => ({
+import HighlightedInformation from "../../../shared/components/HighlightedInformation";
+import EditIcon from '@material-ui/icons/Edit';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ListItemText from '@material-ui/core/ListItemText';
+import Avatar from '@material-ui/core/Avatar';
+import IconButton from '@material-ui/core/IconButton';
+
+import Typography from '@material-ui/core/Typography';
+import FolderIcon from '@material-ui/icons/Folder';
+import DeleteIcon from '@material-ui/icons/Delete';
+import { makeStyles } from '@material-ui/core/styles'
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import {state_to_props} from '../../../util/common_utils'
+import {setUserDetailsToStore,userFetchType} from '../../../store/action'
+import {connect} from 'react-redux'
+import MenuItem from '@material-ui/core/MenuItem';
+
+
+const useStyles = makeStyles((theme) => ({
   tableWrapper: {
     overflowX: "auto",
-    width: "100%"
+    width: "100%",
+    padding:"15px"
   },
   blackBackground: {
     backgroundColor: theme.palette.primary.main
@@ -37,109 +52,178 @@ const styles = theme => ({
   },
   firstData: {
     paddingLeft: theme.spacing(3)
-  }
-});
+  },
+  large: {
+    width: theme.spacing(9),
+    height: theme.spacing(9),
+  },
+}));
 
-const rows = [
+const plan = [
   {
-    id: "description",
-    numeric: false,
-    label: "Action"
+    value: 'Free',
+    label: 'Free, 50MB',
   },
   {
-    id: "balanceChange",
-    numeric: false,
-    label: "Balance change"
+    value: 'Plan A',
+    label: 'Plan A, 100MB',
   },
   {
-    id: "date",
-    numeric: false,
-    label: "Date"
-  },
-  {
-    id: "paidUntil",
-    numeric: false,
-    label: "Paid until"
+    value: 'Plan B',
+    label: 'Plan B,  200MB',
   }
 ];
 
-const rowsPerPage = 25;
-
 function SubscriptionTable(props) {
-  const { transactions, theme, classes } = props;
+  const { transactions } = props;
   const [page, setPage] = useState(0);
+  const [dense, setDense] = React.useState(false);
+  const [secondary, setSecondary] = React.useState(false);
+  const  [isNameEdit,setNameEdit]=React.useState(false);
+  const[name,setName]=React.useState(props.user.username);
+  const [isPasswordEdit,setPasswordEdit]=useState(false);
+  const oldPassword=useRef(null);
+  const newPassword=useRef(null);
 
+  const classes = useStyles();
+  console.log("subscription tablee ",props)
   const handleChangePage = useCallback(
     (_, page) => {
       setPage(page);
     },
     [setPage]
   );
+ const handleNameChange = (e) => {
+   console.log("setName ",e)
+    setName(e.target.value);
+  };
+const updateName=()=>
+{   console.log("updatename ",name);
+    props.setUserDetailsToStore({username:name},userFetchType.UPDATE)
+    setNameEdit(false);
+}
 
   if (transactions.length > 0) {
     return (
       <div className={classes.tableWrapper}>
-        <Table aria-labelledby="tableTitle">
-          <EnhancedTableHead rowCount={transactions.length} rows={rows} />
-          <TableBody>
-            {transactions
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((transaction, index) => (
-                <TableRow hover tabIndex={-1} key={index}>
-                  <TableCell
-                    component="th"
-                    scope="row"
-                    className={classes.firstData}
-                  >
-                    {transaction.description}
-                  </TableCell>
-                  <TableCell component="th" scope="row">
-                    {transaction.balanceChange > 0 ? (
-                      <ColorfulChip
-                        label={`+${currencyPrettyPrint(
-                          transaction.balanceChange
-                        )}`}
-                        color={theme.palette.secondary.main}
-                      />
-                    ) : (
-                      <ColorfulChip
-                        label={currencyPrettyPrint(transaction.balanceChange)}
-                        color={theme.palette.error.dark}
-                      />
-                    )}
-                  </TableCell>
-                  <TableCell component="th" scope="row">
-                    {unixToDateString(transaction.timestamp)}
-                  </TableCell>
-                  <TableCell component="th" scope="row">
-                    {transaction.paidUntil
-                      ? unixToDateString(transaction.paidUntil)
-                      : ""}
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
-        <TablePagination
-          component="div"
-          count={transactions.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          backIconButtonProps={{
-            "aria-label": "Previous Page"
-          }}
-          nextIconButtonProps={{
-            "aria-label": "Next Page"
-          }}
-          onChangePage={handleChangePage}
-          classes={{
-            select: classes.dNone,
-            selectIcon: classes.dNone,
-            actions: transactions.length > 0 ? classes.dBlock : classes.dNone,
-            caption: transactions.length > 0 ? classes.dBlock : classes.dNone
-          }}
-          labelRowsPerPage=""
+      <Grid
+  container
+  direction="row"
+  justify="center"
+  alignItems="center"
+>
+      <Avatar className={classes.large} variant="rounded" >H</Avatar>
+      </Grid>
+      <div className={classes.demo}>
+            <List dense={dense}>
+          
+                <ListItem>
+                  <ListItemText
+                    primary="Name"
+                    secondary={secondary ? 'Secondary text' : null}
+                  />
+                  <ListItemSecondaryAction>
+                    {isNameEdit===false?<>{props.user.username} <IconButton edge="end" aria-label="delete" onClick={()=>setNameEdit(true)}>
+              <EditIcon />
+               </IconButton> </>: 
+                    <TextField id="standard-password-input" type="text" variant="outlined" size="small" value={name} onChange={handleNameChange}
+       InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+             <IconButton edge="end" aria-label="update" onClick={updateName}>
+              <CheckCircleOutlineIcon style={{color:"green"}}/>
+               </IconButton>
+               <IconButton edge="end" aria-label="close"  style={{color:"red"}} onClick={()=>setNameEdit(false)}>
+                      <HighlightOffIcon />
+                    </IconButton>
+            </InputAdornment>)}}  /> }
+                  </ListItemSecondaryAction>
+                </ListItem>
+
+                 <ListItem>
+                  <ListItemText  primary="Total Space" />
+                  <ListItemSecondaryAction>
+                      <ListItemText >{props.license.totalSpace} MB</ListItemText>
+                  </ListItemSecondaryAction>
+                </ListItem>
+                 <ListItem>
+                  <ListItemText  primary="Free Space" />
+                  <ListItemSecondaryAction>
+                      <ListItemText>{props.license.totalSpace-props.license.usedSpace} MB</ListItemText>
+                  </ListItemSecondaryAction>
+                </ListItem>
+                <ListItem>
+                  <ListItemText  primary="Plan" />
+                  <ListItemSecondaryAction>
+                      <ListItemText><TextField select defaultValue={props.license.licenseType}  variant="outlined" size="small">
+                      {plan.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+                      </TextField></ListItemText>
+                  </ListItemSecondaryAction>
+                </ListItem>
+                 <ListItem>
+                  <ListItemText  primary="Email Address" />
+                  <ListItemSecondaryAction>
+                      <ListItemText>{props.user.email} </ListItemText>
+                  </ListItemSecondaryAction>
+                </ListItem>
+                <ListItem>
+                  <ListItemText
+                    primary="Password"
+                  />
+                  <ListItemSecondaryAction>
+                   <ListItemText> ****** <IconButton edge="end"  onClick={()=>setPasswordEdit(true)}>
+              <EditIcon />
+               </IconButton></ListItemText>
+                  </ListItemSecondaryAction>
+                </ListItem>
+           
+            </List>
+          </div>
+            <Dialog
+        open={isPasswordEdit}
+        onClose={()=>setPasswordEdit(false)}
+        scroll={'paper'}
+        aria-labelledby="scroll-dialog-title"
+        aria-describedby="scroll-dialog-description"
+      >
+        <DialogTitle   id="scroll-dialog-title">Password reset</DialogTitle>
+        <DialogContent   >
+          <DialogContentText
+            id="scroll-dialog-description"
+            tabIndex={-1}
+          >
+          <TextField
+                      id="standard-password-input"
+          label="old Password"
+          type="password"
+          autoComplete="current-password"
+          variant="outlined"
+          size="small"
+          inputRef={oldPassword}
+         
         />
+          <TextField
+                      id="standard-password-input"
+          label="new Password"
+          type="password"
+          autoComplete="current-password"
+          variant="outlined"
+          size="small"
+          inputRef={newPassword}
+         
+        />
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions   >
+          <Button  color="secondary" variant="contained">
+            update
+          </Button>
+        </DialogActions>
+      </Dialog>
       </div>
     );
   }
@@ -153,9 +237,7 @@ function SubscriptionTable(props) {
 }
 
 SubscriptionTable.propTypes = {
-  theme: PropTypes.object.isRequired,
-  classes: PropTypes.object.isRequired,
   transactions: PropTypes.arrayOf(PropTypes.object).isRequired
 };
 
-export default withStyles(styles, { withTheme: true })(SubscriptionTable);
+export default connect(state_to_props,{setUserDetailsToStore:setUserDetailsToStore})(SubscriptionTable);

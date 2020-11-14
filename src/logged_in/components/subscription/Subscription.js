@@ -23,8 +23,8 @@ function Subscription(props) {
   return (
     <Paper>
       <List disablePadding>
-        <SubscriptionInfo openAddBalanceDialog={openAddBalanceDialog} />
-        <Divider className={classes.divider} />
+        {/* <SubscriptionInfo openAddBalanceDialog={openAddBalanceDialog} />
+        <Divider className={classes.divider} /> */}
         <SubscriptionTable transactions={transactions} />
       </List>
     </Paper>

@@ -57,7 +57,7 @@ export default function FileCard(props) {
   // const [openDownloadHist, setOpenDownloadHist] = useState(false);
   const [openDownload, setOpenDownload] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-  const descriptionElementRef = useRef(null);
+
   const encryptKeyRef=useRef(null);
   const [downloadHistory,setDownloadHistory]=useState(null);
   const handleClose = () => {
@@ -206,7 +206,6 @@ export default function FileCard(props) {
         <DialogContent >
           <DialogContentText
             id="scroll-dialog-description"
-            ref={descriptionElementRef}
             tabIndex={-1}
           
           >
@@ -230,7 +229,6 @@ export default function FileCard(props) {
         <DialogContent   >
           <DialogContentText
             id="scroll-dialog-description"
-            ref={descriptionElementRef}
             tabIndex={-1}
           >
           <TextField
@@ -262,7 +260,6 @@ export default function FileCard(props) {
         <DialogContent>
           <DialogContentText
             id="scroll-dialog-description"
-            ref={descriptionElementRef}
             tabIndex={-1}
           >
           This operation is irreversible. Are you sure want to delete this file ?
