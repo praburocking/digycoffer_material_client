@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import PropTypes from "prop-types";
-import { Switch } from "react-router-dom";
+import { Switch,Route ,withRouter,Redirect } from "react-router-dom";
 import { withStyles } from "@material-ui/core";
 import Dashboard from "./dashboard/Dashboard";
 import Posts from "./posts/Posts";
@@ -80,14 +80,15 @@ function Routing(props) {
           selectPosts={selectPosts}
         />
         <PropsRoute
-          path="/home/subscription"
+          path="/home/accounts"
           component={Subscription}
           transactions={transactions}
           pushMessageToSnackbar={pushMessageToSnackbar}
           selectSubscription={selectSubscription}
           openAddBalanceDialog={openAddBalanceDialog}
         />
-        <PropsRoute
+ <Route exact path ="" render={()=><Redirect to="/home/files"/>} ></Route>
+        {/* <PropsRoute
           path=""
           component={Dashboard}
           toggleAccountActivation={toggleAccountActivation}
@@ -98,7 +99,7 @@ function Routing(props) {
           setTargets={setTargets}
           isAccountActivated={isAccountActivated}
           selectDashboard={selectDashboard}
-        />
+        /> */}
       </Switch>
     </div>
   );

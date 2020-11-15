@@ -33,8 +33,9 @@ import Balance from "./Balance";
 import NavigationDrawer from "../../../shared/components/NavigationDrawer";
 import {signout} from '../../../services/connectToServer'
 import {deleteAuthorizationCookies} from '../../../util/common_utils'
-
+import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import {emtStores} from '../../../store/action'
+import DescriptionIcon from '@material-ui/icons/Description';
 
 const styles = (theme) => ({
   appBar: {
@@ -172,29 +173,14 @@ function NavBar(props) {
   }
 
   const menuItems = [
-    {
-      link: "/home/dashboard",
-      name: "Dashboard",
-      onClick: closeMobileDrawer,
-      icon: {
-        desktop: (
-          <DashboardIcon
-            className={
-              selectedTab === "Dashboard" ? classes.textPrimary : "text-white"
-            }
-            fontSize="small"
-          />
-        ),
-        mobile: <DashboardIcon className="text-white" />,
-      },
-    },
+    
     {
       link: "/home/files",
-      name: "Posts",
+      name: "Files",
       onClick: closeMobileDrawer,
       icon: {
         desktop: (
-          <ImageIcon
+          <DescriptionIcon
             className={
               selectedTab === "Posts" ? classes.textPrimary : "text-white"
             }
@@ -205,12 +191,12 @@ function NavBar(props) {
       },
     },
     {
-      link: "/home/subscription",
-      name: "Subscription",
+      link: "/home/accounts",
+      name: "Accounts",
       onClick: closeMobileDrawer,
       icon: {
         desktop: (
-          <AccountBalanceIcon
+          <AccountBoxIcon
             className={
               selectedTab === "Subscription"
                 ? classes.textPrimary
@@ -228,7 +214,7 @@ function NavBar(props) {
       onClick:logOut,
       icon: {
         desktop: (
-          <PowerSettingsNewIcon className="text-white" fontSize="small" />
+          <PowerSettingsNewIcon className="text-white" style={{color:"red"}} fontSize="small" />
         ),
         mobile: <PowerSettingsNewIcon className="text-white" />,
       },
@@ -257,7 +243,7 @@ function NavBar(props) {
                 display="inline"
                 color="primary"
               >
-                Wa
+                Digy- 
               </Typography>
               <Typography
                 variant="h4"
@@ -265,7 +251,7 @@ function NavBar(props) {
                 display="inline"
                 color="secondary"
               >
-                Ver
+                Coffer
               </Typography>
             </Hidden>
           </Box>
@@ -288,29 +274,9 @@ function NavBar(props) {
               disableGutters
               className={classNames(classes.iconListItem, classes.smBordered)}
             >
-              <Avatar
-                alt="profile picture"
-                src={`${process.env.PUBLIC_URL}/images/logged_in/profilePicture.jpg`}
-                className={classNames(classes.accountAvatar)}
-              />
-              {isWidthUp("sm", width) && (
-                <ListItemText
-                  className={classes.username}
-                  primary={
-                    <Typography color="textPrimary">Username</Typography>
-                  }
-                />
-              )}
+        
             </ListItem>
           </Box>
-          <IconButton
-            onClick={openDrawer}
-            color="primary"
-            aria-label="Open Sidedrawer"
-          >
-            <SupervisorAccountIcon />
-          </IconButton>
-          <SideDrawer open={isSideDrawerOpen} onClose={closeDrawer} />
         </Toolbar>
       </AppBar>
       <Hidden xsDown>

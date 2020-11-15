@@ -57,6 +57,7 @@ export default function FileCard(props) {
   // const [openDownloadHist, setOpenDownloadHist] = useState(false);
   const [openDownload, setOpenDownload] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
+   const [openEdit, setOpenEdit] = useState(false);
 
   const encryptKeyRef=useRef(null);
   const [downloadHistory,setDownloadHistory]=useState(null);
@@ -75,6 +76,10 @@ export default function FileCard(props) {
 
   const download=async (record)=>
     {
+      if(encryptKeyRef.current.value===""||encryptKeyRef.current.value===null){
+         props.pushMessageToSnackbar({text:"empty encryption key"})
+         return
+      }
       var downloadResp=await downloadFiles(props.file.id,encryptKeyRef.current.value);
       if(downloadResp.status===200)
         { 
@@ -108,7 +113,9 @@ export default function FileCard(props) {
       console.log(response);
     }
 
-
+  const handeEdit=()=>{
+    setOpenEdit(false)
+  }
     const handeDelete=async()=>
     {
         let deleteResp=await deleteFile(props.file.id)
@@ -175,7 +182,7 @@ export default function FileCard(props) {
                 </Button>
               </Tooltip>
               <Tooltip title="edit description">
-                <Button aria-label="edit" color="secondary" fullWidth>
+                <Button aria-label="edit" color="secondary" fullWidth  onClick={()=>setOpenEdit(true)}>
                   <EditIcon />
                 </Button>
               </Tooltip>
@@ -244,6 +251,9 @@ export default function FileCard(props) {
           </DialogContentText>
         </DialogContent>
         <DialogActions   >
+          <Button onClick={()=>setOpenDownload(false)}  >
+            cancel
+          </Button>
           <Button onClick={download} color="secondary" variant="contained">
             download
           </Button>
@@ -266,8 +276,43 @@ export default function FileCard(props) {
           </DialogContentText>
         </DialogContent>
         <DialogActions   >
+        <Button onClick={()=>setOpenDelete(false)} >
+          cancel
+          </Button>
           <Button onClick={handeDelete} color="secondary" variant="contained">
             Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={openEdit}
+        onClose={()=>setOpenEdit(false)}
+        scroll={'paper'}
+        aria-labelledby="scroll-dialog-title"
+        aria-describedby="scroll-dialog-description"
+      >
+        <DialogTitle   id="scroll-dialog-title"> Edit -  {props.file.name}</DialogTitle>
+        <DialogContent>
+          <DialogContentText
+            id="scroll-dialog-description"
+            tabIndex={-1}
+          >
+         <TextField
+          id="outlined-multiline-static"
+          label="Multiline"
+          multiline
+          rows={4}
+          defaultValue={props.file.description}
+          variant="outlined"
+        />
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions   >
+        <Button onClick={()=>setOpenEdit(false)}  >
+            Cancel
+          </Button>
+          <Button onClick={handeEdit} color="secondary" variant="contained">
+            Edit
           </Button>
         </DialogActions>
       </Dialog>

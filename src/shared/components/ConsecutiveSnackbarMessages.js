@@ -4,7 +4,7 @@ import { Snackbar, withStyles } from "@material-ui/core";
 
 const styles = (theme) => ({
   root: {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.secondary.main,
     paddingTop: 0,
     paddingBottom: 0,
   },

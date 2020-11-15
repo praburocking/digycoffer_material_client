@@ -1,4 +1,4 @@
-import React, { useCallback, useState,useRef } from "react";
+import React, { useCallback, useState,useRef ,useEffect} from "react";
 import PropTypes from "prop-types";
 import {
   TextField,Grid,Dialog,DialogTitle,DialogContentText,DialogContent,DialogActions,Button
@@ -26,7 +26,9 @@ import {state_to_props} from '../../../util/common_utils'
 import {setUserDetailsToStore,userFetchType} from '../../../store/action'
 import {connect} from 'react-redux'
 import MenuItem from '@material-ui/core/MenuItem';
-
+import {addUserImage,getUserImage,changePassword} from '../../../services/connectToServer'
+import Badge from '@material-ui/core/Badge';
+import Dropzone,{useDropzone} from 'react-dropzone'
 
 const useStyles = makeStyles((theme) => ({
   tableWrapper: {
@@ -76,7 +78,6 @@ const plan = [
 
 function SubscriptionTable(props) {
   const { transactions } = props;
-  const [page, setPage] = useState(0);
   const [dense, setDense] = React.useState(false);
   const [secondary, setSecondary] = React.useState(false);
   const  [isNameEdit,setNameEdit]=React.useState(false);
@@ -84,15 +85,40 @@ function SubscriptionTable(props) {
   const [isPasswordEdit,setPasswordEdit]=useState(false);
   const oldPassword=useRef(null);
   const newPassword=useRef(null);
+  const [userImageUrl,setUserImageUrl]=useState("");
+    const onDrop = useCallback(acceptedFiles => {
+    uploadFile(acceptedFiles[0]);
+  }, [])
+ 
 
-  const classes = useStyles();
+  const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop, accept: 'image/jpeg, image/png' })
+   const classes = useStyles();
+    useEffect(()=>{
+        const asyncprocess=async ()=>{
+        let imgResp= await getUserImage()
+        if(imgResp.status===200)
+        {
+        var urlCreator = window.URL || window.webkitURL;
+        var imageUrl = urlCreator.createObjectURL( imgResp.data );
+        console.log("imageUrl ==>",imageUrl);
+        setUserImageUrl(imageUrl);
+        }
+        }
+        asyncprocess()
+    },[])
+ const uploadFile=(file)=>
+{
+    if(file)
+    {
+        const data = new FormData() 
+        data.append('file', file);
+       
+        console.log("onchange",file);
+        addUserImage(data);
+    }
+}
+ 
   console.log("subscription tablee ",props)
-  const handleChangePage = useCallback(
-    (_, page) => {
-      setPage(page);
-    },
-    [setPage]
-  );
  const handleNameChange = (e) => {
    console.log("setName ",e)
     setName(e.target.value);
@@ -101,6 +127,20 @@ const updateName=()=>
 {   console.log("updatename ",name);
     props.setUserDetailsToStore({username:name},userFetchType.UPDATE)
     setNameEdit(false);
+}
+const updatePassword=async ()=>{
+  console.log("pasword ==>  ",oldPassword)
+    console.log("new pasword ==>  ",newPassword)
+    if(oldPassword.current.value==="" ||oldPassword.current.value===null){
+       props.pushMessageToSnackbar({text:"empty value for oldPassword"})
+       return
+    }
+    if(newPassword.current.value==="" ||newPassword.current.value===null){
+      props.pushMessageToSnackbar({text:"empty value for new Password"})
+      return;
+    }
+  let response=await changePassword({old_password:oldPassword.current.value,new_password:newPassword.current.value});
+  setPasswordEdit(false)
 }
 
   if (transactions.length > 0) {
@@ -111,8 +151,13 @@ const updateName=()=>
   direction="row"
   justify="center"
   alignItems="center"
->
-      <Avatar className={classes.large} variant="rounded" >H</Avatar>
+>       
+      <Badge  badgeContent={ <div {...getRootProps()}><input {...getInputProps()} />
+     
+     <EditIcon/></div>
+    } color="primary">
+      <Avatar className={classes.large} variant="rounded"  alt= {props.user.userName} src={userImageUrl}></Avatar>
+      </Badge>
       </Grid>
       <div className={classes.demo}>
             <List dense={dense}>
@@ -219,7 +264,7 @@ const updateName=()=>
           </DialogContentText>
         </DialogContent>
         <DialogActions   >
-          <Button  color="secondary" variant="contained">
+          <Button  color="secondary" variant="contained"  onClick={updatePassword}>
             update
           </Button>
         </DialogActions>
