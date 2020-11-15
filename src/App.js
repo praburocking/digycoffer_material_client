@@ -54,7 +54,7 @@ function App(props) {
           <Route  path ="/home" render={()=>userExist()?<LoggedInComponent/>:<Redirect to="/"/>} ></Route>
           <Route exact path ="/posts" render={()=>userExist()?<LoggedInComponent/>:<Redirect to="/"/>} ></Route>
           <Route exact path ="/faq" render={()=>userExist()?<Redirect to="/home"/>:<LoggedOutComponent/>} ></Route>
-          <Route path ="/verify" render={()=>userExist()?<Redirect to="/home"/>:<LoggedOutComponent/>} ></Route>
+          <Route path ="/verify" render={()=><LoggedOutComponent/>} ></Route>
           </Switch>
         </Suspense>
       </MuiThemeProvider>
